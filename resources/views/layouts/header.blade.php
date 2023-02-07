@@ -31,6 +31,22 @@
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
+
+
+
+{{--                            @if(Auth::guard('admin')->check())--}}
+{{--                                <a onclick="event.preventDefault();--}}
+{{--                                document.getElementById('logout-form').submit();" class="dropdown-item" type="button">Logout</a>--}}
+{{--                                <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">--}}
+{{--                                    @csrf--}}
+{{--                                </form>--}}
+{{--                            @elseif(Auth::guard('web')->check())--}}
+{{--                                <a onclick="event.preventDefault();--}}
+{{--                                document.getElementById('logout-form').submit();" class="dropdown-item" type="button">Logout</a>--}}
+{{--                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">--}}
+{{--                                    @csrf--}}
+{{--                                </form>--}}
+{{--                            @endif--}}
                         </div>
                     </div>
                 </li>

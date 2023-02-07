@@ -58,7 +58,7 @@ background: linear-gradient(178deg, rgba(0,124,199,1) 0%, rgb(0,93,199) 50%, rgb
                         <h4 class="text-white">Step By Step Learning</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('login') }}">
+                        <form method="POST" action="{{ route('admin.loginAttempt') }}">
                             @csrf
                             <div class="row mb-3">
                                 <div class="col-md-12">
@@ -107,7 +107,7 @@ background: linear-gradient(178deg, rgba(0,124,199,1) 0%, rgb(0,93,199) 50%, rgb
 
                             <div class="row mt-3">
                                 <div class="col-md-12 text-center">
-                                    <a href="{{ route('admin.login') }}" class="text-light"><u>Admin Login</u></a>
+                                    <a href="{{ route('login') }}" class="text-light"><u>User Login</u></a>
                                 </div>
                             </div>
                         </form>

@@ -33,10 +33,25 @@ class PermissionSeeder extends Seeder
             ['name' => 'Sales', 'guard_name' => 'web', 'model' => 'Settings'],
             ['name' => 'Role', 'guard_name' => 'web', 'model' => 'Settings'],
             ['name' => 'Employee', 'guard_name' => 'web', 'model' => 'Settings'],
+
+            //Customer
+            ['name' => 'Create Customer', 'guard_name' => 'admin', 'model' => 'Customer'],
+            ['name' => 'View Customer', 'guard_name' => 'admin', 'model' => 'Customer'],
+            ['name' => 'Edit Customer', 'guard_name' => 'admin', 'model' => 'Customer'],
+            ['name' => 'Delete Customer', 'guard_name' => 'admin', 'model' => 'Customer'],
+
+            //Settings
+            ['name' => 'Employee Dashboard', 'guard_name' => 'admin', 'model' => 'Settings'],
+            ['name' => 'Manager Dashboard', 'guard_name' => 'admin', 'model' => 'Settings'],
+            ['name' => 'Product Category', 'guard_name' => 'admin', 'model' => 'Settings'],
+            ['name' => 'Product', 'guard_name' => 'admin', 'model' => 'Settings'],
+            ['name' => 'Sales', 'guard_name' => 'admin', 'model' => 'Settings'],
+            ['name' => 'Role', 'guard_name' => 'admin', 'model' => 'Settings'],
+            ['name' => 'Employee', 'guard_name' => 'admin', 'model' => 'Settings'],
         ];
 
         foreach ($permissions as $permission) {
-            if (!Permission::whereName($permission['name'])->exists()) {
+            if (!Permission::whereName($permission['name'])->whereGuardName($permission['guard_name'])->exists()) {
                 Permission::create($permission);
             }
         }
@@ -47,10 +62,10 @@ class PermissionSeeder extends Seeder
         $differenceArray = array_diff($dbPermission->toArray(), $collectionPermission->toArray());
         Permission::whereIn('name', $differenceArray)->delete();
 
-        $permissionsIds = Permission::all()->pluck('id');
+        $permissionsIds = Permission::whereGuardName('web')->pluck('id');
 
-        if (!Role::whereName('Admin')->exists()) {
-            $role = Role::create(['name' => 'Admin']);
+        if (!Role::whereName('Admin')->whereGuardName('web')->exists()) {
+            $role = Role::create(['name' => 'Admin', 'guard_name' => 'web']);
             $role->givePermissionTo($permissionsIds);
 
             $user = [
@@ -64,12 +79,21 @@ class PermissionSeeder extends Seeder
             $user = User::create($user);
             $user->assignRole($role->id);
         } else {
-            $role = Role::whereName('Admin')->first();
+            $role = Role::whereName('Admin')->whereGuardName('web')->first();
             $role->syncPermissions($permissionsIds);
         }
 
-        if (!Role::whereName('Employee')->exists()) {
-            $employeePermissionsIds = Permission::whereIn('name',['Leave Apply', 'View Payslip'])->pluck('id');
+        $permissionsIds = Permission::whereGuardName('admin')->pluck('id');
+        if (!Role::whereName('Admin')->whereGuardName('admin')->exists()) {
+            $role = Role::create(['name' => 'Admin', 'guard_name' => 'admin']);
+            $role->givePermissionTo($permissionsIds);
+        } else {
+            $role = Role::whereName('Admin')->whereGuardName('admin')->first();
+            $role->syncPermissions($permissionsIds);
+        }
+
+        if (!Role::whereName('Employee')->whereGuardName('web')->exists()) {
+            $employeePermissionsIds = Permission::whereIn('name',['Leave Apply', 'View Payslip'])->whereGuardName('web')->pluck('id');
             $role = Role::create(['name' => 'Employee']);
             $role->syncPermissions($employeePermissionsIds);
         }

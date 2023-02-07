@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
@@ -24,7 +25,8 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::middleware('auth')->group(static function () {
+//Route::middleware('auth')->group(static function () {
+Route::group(['middleware' => ['auth:web,admin'] ], function(){
     Route::get('/', function () {
             return redirect()->route('home');
     });
@@ -42,5 +44,16 @@ Route::middleware('auth')->group(static function () {
     Route::resource('sale', SaleController::class);
     Route::get('get-product-list/{category_id}', [ProductController::class, 'getProductList']);
 });
+
+Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'loginAttempt'])->name('admin.loginAttempt');
+
+//Method 2:separate dashboard for guard's
+//Route::middleware('auth:admin')->group(static function () {
+//    Route::prefix('admin')->group(function () {
+//        Route::get('/home', [AdminController::class, 'adminDashboard'])->name('admin.home');
+//        Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+//    });
+//});
 
 Route::get('student-list', [ProductController::class, 'getStudentList']);

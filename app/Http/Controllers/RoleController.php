@@ -19,7 +19,7 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Role::all();
+            $data = Role::whereGuardName('web')->get();
 
             return Datatables::of($data)
                 ->addIndexColumn()
@@ -48,7 +48,7 @@ class RoleController extends Controller
     public function create()
     {
         $role = '';
-        $permissions = Permission::all()->groupBy('model');
+        $permissions = Permission::whereGuardName('web')->get()->groupBy('model');
         return view('role.create', compact('permissions', 'role'));
     }
 
@@ -56,7 +56,7 @@ class RoleController extends Controller
     {
         DB::beginTransaction();
         try {
-            $role = Role::create(['name' => $request['name']]);
+            $role = Role::create(['name' => $request['name'], 'guard_name' => 'web']);
             $role->givePermissionTo([$request['permissions']]);
             DB::commit();
 
@@ -71,14 +71,14 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        $permissions = Permission::all()->groupBy('model');
+        $permissions = Permission::whereGuardName('web')->get()->groupBy('model');
 
         return view('role.create', compact('role', 'permissions'));
     }
 
     public function show(Role $role)
     {
-        $permissions = Permission::all()->groupBy('model');
+        $permissions = Permission::whereGuardName('web')->get()->groupBy('model');
 
         return view('role.show', compact('role', 'permissions'));
     }
